@@ -118,7 +118,7 @@ However, you can also provide `acmedns` plugin with a single configuration which
     "your-domain-1.example.com": {
         "username": "<username>",
         "password": "<password>",
-        "fulldomain": "<full domain from registration response",
+        "fulldomain": "<full domain from registration response>",
         "subdomain": "<subdomain>",
         "server_url": "<server URL>"
     },
@@ -197,7 +197,7 @@ Or like so (multi-account-configuration):
 					"your-domain-1.example.com": {
 						"username": "<username>",
 						"password": "<password>",
-						"fulldomain": "<full domain from registration response",
+						"fulldomain": "<full domain from registration response>",
 						"subdomain": "<subdomain>",
 						"server_url": "<server URL>"
 					}
@@ -228,7 +228,7 @@ Or like so (credentials file):
 
 If Caddy hangs on trying to obtain a certificate and later throws a timeout error, make sure that you created a correct CNAME record:
 
-`_acme-challenge.your-domain.example.com.  CNAME  <ACME-DNS subdomain from registration>`
+`_acme-challenge.your-domain.example.com.  CNAME  <ACME-DNS subdomain>`
 
 You can check this with `dig _acme-challenge.your-domain.example.com.`
 
