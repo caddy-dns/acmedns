@@ -17,9 +17,11 @@ To use ACME-DNS for solving [DNS-01 challenge](https://letsencrypt.org/docs/chal
 * A domain name that you control. In this example, we'll assume it's `your-domain.example.com`. You'll need to be able to create a CNAME record with name `_acme-challenge.your-domain.example.com`.
 * An access to ACME-DNS server. For testing purposes, you can you the public server at [https://auth.acme-dns.io](). However, self-hosting is highly encouraged. To learn how to self-host ACME-DNS server, refer to [ACME-DNS documentation](https://github.com/joohoi/acme-dns#self-hosted).
 
-The follow these steps:
 
-1. Register and account on ACME-DNS server. Refer to [ACME-DNS documentation](https://github.com/joohoi/acme-dns#register-endpoint). In short: make a POST request to `<ACME-DNS server URL>/register`, i.e. run:
+Then follow these steps:
+
+1. Register an account on ACME-DNS server (see [ACME-DNS documentation](https://github.com/joohoi/acme-dns#register-endpoint)). In short: make a POST request to `<ACME-DNS server URL>/register`, i.e. run:
+
 	`curl -X POST https://auth.acme-dns.io/register`
 
 	The response should be a JSON that contains your new credentials, looking similar to this one:
@@ -38,7 +40,7 @@ The follow these steps:
 
     `_acme-challenge.your-domain.example.com.   CNAME   37c51280-79ca-435f-af32-c775eb67e2ab.auth.acme-dns.io.`
 
-3. Use the credentials obtained in step 1 to configure `acmedns` plugin in Caddy. This is a simple example of a working Caddyfile:
+3. Use the credentials obtained in step 1 to configure `acmedns` plugin in Caddy. This is a simple example of a working `Caddyfile`:
 
     ```
 	your-domain.example.com
@@ -46,7 +48,7 @@ The follow these steps:
 	tls {
 		dns acmedns {
 			username <username you obtained in step 1>
-			password <password you obtained in steip 1>
+			password <password you obtained in step 1>
 			subdomain <ACME-DNS subdomain you obtained in step 1>
 			server_url <ACME-DNS server API URL>   # e.g. https://auth.acme-dns.io
 		}
@@ -59,8 +61,8 @@ The follow these steps:
 
 There are two orthogonal choices that you can make about the configuration of `acmedns` plugin.
 
-1. Whether to put the credentials directly in `Caddyfile` / `caddy.json` _or_ to use a separate configuration file.
-2. Whether to use a simple one-account configuration as described in the previous section _or_ to use a multi-account set up (more on that below).
+1. Whether to put the credentials directly in `Caddyfile` / `caddy.json` _or_ to use a separate credentials file.
+2. Whether to use a simple one-account configuration as described in the previous section _or_ to use a multi-account set up.
 
 ### JSON credentials file
 
@@ -70,7 +72,7 @@ You can save `acmedns` account credentials as a JSON file instead or writing it 
 {
 	"username": "<username>",
 	"password": "<password>",
-	"subdomain": "37c51280-79ca-435f-af32-c775eb67e2ab",
+	"subdomain": "<subdomain>",
 	"server_url": "<server_url>"
 }
 ```
@@ -128,9 +130,9 @@ However, you can also provide `acmedns` plugin with a single configuration which
 }
 ```
 
-Not that this type of configuration requires one more field -- `fulldomain` (as returned by registration endpoint).
+Note that this type of configuration requires one more field – `fulldomain` (as returned by the registration endpoint).
 
-You can also embed this into `Caddyfile` directly. If you want this configuration to apply to all site-blocks in your `Caddyfile`, you can use [acme_dns global option](https://caddyserver.com/docs/caddyfile/options#acme-dns).
+You can also embed this into `Caddyfile` directly. If you want this configuration to apply to all site-blocks in your `Caddyfile`, use [acme_dns global option](https://caddyserver.com/docs/caddyfile/options#acme-dns).
 
 ```
 {
@@ -161,11 +163,11 @@ your-domain-2.example.com {
 }
 ```
 
-Using multi-account configuration is useful if you want to manage all your configurations with [acme-dns-client CLI tool](https://github.com/acme-dns/acme-dns-client). `acme-dns-client` helps saves obtained credentials in a JSON file at `/etc/acmedns/clientstorage.json`. This file is compatible with `acmedns` Caddy plugin, you can point to it with `dns acmedns /etc/acmedns/clientstorage.json` directive (make sure that Caddy has permissions to read that file).
+Using multi-account configuration is useful if you want to manage all your configurations with [acme-dns-client CLI tool](https://github.com/acme-dns/acme-dns-client). `acme-dns-client` saves obtained credentials in a JSON file at `/etc/acmedns/clientstorage.json`. This file is compatible with `acmedns` Caddy plugin, so you can point to it with `dns acmedns /etc/acmedns/clientstorage.json` directive (though you need to make sure that Caddy has permissions to read that file).
 
 ### Using `caddy.json` instead of `Caddyfile`
 
-You have all the same options for configuration if you use `caddy.json` configuration format instead of `Caddyfile`. Configure your [ACME issuer](https://caddyserver.com/docs/json/apps/tls/automation/policies/issuer/acme/) like so (single-account configuration):
+You have all the same options if you use `caddy.json` configuration format instead of `Caddyfile`. Configure your [ACME issuer](https://caddyserver.com/docs/json/apps/tls/automation/policies/issuer/acme/) like so (single-account configuration):
 
 ```
 {
@@ -176,7 +178,7 @@ You have all the same options for configuration if you use `caddy.json` configur
 				"name": "acmedns",
 				"username": "<username>",
 				"password": "<password>",
-				"subdomain": "37c51280-79ca-435f-af32-c775eb67e2ab",
+				"subdomain": "<subdomain>",
 				"server_url": "<server_url>"
 			}
 		}
@@ -226,13 +228,13 @@ Or like so (credentials file):
 
 ## Troubleshooting
 
-If Caddy hangs on trying to obtain a certificate and later throws a timeout error, make sure that you created a correct CNAME record:
+If Caddy hangs while trying to obtain a certificate and then throws a timeout error, make sure that you created a correct CNAME record:
 
-`_acme-challenge.your-domain.example.com.  CNAME  <ACME-DNS subdomain>`
+`_acme-challenge.your-domain.example.com.  CNAME  <ACME-DNS account full domain>`
 
 You can check this with `dig _acme-challenge.your-domain.example.com.`
 
-If this record it correct, this error might be caused by DNS resolvers caching results. Using Cloudflare or Google resolvers (1.1.1.1 and 8.8.8.8) might help:
+If this record it correct, this error might be caused by DNS resolvers caching behaviour. Using Cloudflare or Google resolvers (1.1.1.1 and 8.8.8.8) might help:
 
 ```
 your-domain.example.com
@@ -244,7 +246,7 @@ tls {
 }
 ```
 
-## Resources, links
+## Resources
 
 1. [A Technical Deep Dive: Securing the Automation of ACME DNS Challenge Validation](https://www.eff.org/deeplinks/2018/02/technical-deep-dive-securing-automation-acme-dns-challenge-validation)
 
@@ -252,4 +254,4 @@ tls {
 
 3. [acme-dns-client](https://github.com/acme-dns/acme-dns-client)
 
-4. [ACME-DNS provider for `libdns`](https://github.com/libdns/acmedns) -- this `acmedns` Caddy plugin depends on `libdns/acmedns` provider.
+4. [ACME-DNS provider for `libdns`](https://github.com/libdns/acmedns) – this `acmedns` Caddy plugin depends on `libdns/acmedns` provider.
