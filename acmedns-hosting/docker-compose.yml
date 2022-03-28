@@ -1,0 +1,26 @@
+version: '3'
+services:
+  acmedns:
+    image: joohoi/acme-dns:v0.8
+    ports:
+      - "${IP_ADDRESS}:53:53"
+      - "${IP_ADDRESS}:53:53/udp"
+    expose:
+      - "80"
+    volumes:
+      - ./acmedns-data:/var/lib/acme-dns:rw
+      - ./acmedns-config:/etc/acme-dns:ro
+  caddy:
+    image: caddy:2.4.6
+    ports:
+      - "443:443"
+      - "80:80"
+    depends_on:
+      - acmedns
+    environment:
+      - API_TOKEN=${API_TOKEN}
+      - ACMEDNS_DOMAIN=${ACMEDNS_DOMAIN}
+    volumes:
+      - ./caddy-config:/config:rw
+      - ./caddy-data:/data:rw
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro

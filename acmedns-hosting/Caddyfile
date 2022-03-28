@@ -1,0 +1,18 @@
+{$ACMEDNS_DOMAIN}
+
+@authorized {
+    path /{$API_TOKEN}/*
+}
+
+@unauthorized {
+    not path /{$API_TOKEN}/*
+}
+
+route @authorized {
+    uri strip_prefix /{$API_TOKEN}
+    reverse_proxy http://acmedns
+}
+
+route @unauthorized {
+    respond "Unauthorized" 401
+}
