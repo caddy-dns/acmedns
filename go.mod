@@ -3,7 +3,7 @@ module github.com/caddy-dns/acmedns
 go 1.18
 
 require (
-	github.com/caddyserver/caddy/v2 v2.6.3
+	github.com/caddyserver/caddy/v2 v2.6.4
 	github.com/libdns/acmedns v0.2.0
 )
 
