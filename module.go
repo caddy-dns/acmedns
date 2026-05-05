@@ -31,6 +31,14 @@ func (Provider) CaddyModule() caddy.ModuleInfo {
 // Provision sets up the module. Implements caddy.Provisioner.
 func (p *Provider) Provision(ctx caddy.Context) error {
 	if p.ConfigFilePath == "" {
+		repl := caddy.NewReplacer()
+		if p.Configs != nil {
+			for _, config := range p.Configs {
+				config.Password = repl.ReplaceAll(config.Password, "")
+			}
+		} else {
+			p.Password = repl.ReplaceAll(p.Password, "")
+		}
 		return nil
 	}
 	file, err := ioutil.ReadFile(p.ConfigFilePath)

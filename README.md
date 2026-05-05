@@ -48,7 +48,7 @@ Then follow these steps:
 	tls {
 		dns acmedns {
 			username <username you obtained in step 1>
-			password <password you obtained in step 1>
+			password <password you obtained in step 1> # supports Caddy placeholders
 			subdomain <ACME-DNS subdomain you obtained in step 1>
 			server_url <ACME-DNS server API URL>   # e.g. https://auth.acme-dns.io
 		}
@@ -140,7 +140,7 @@ You can also embed this into `Caddyfile` directly. If you want this configuratio
 		config {
 			your-domain-1.example.com {
 				username <username>
-				password <password>
+				password <password> # supports Caddy placeholders
 				subdomain <subdomain>
 				server_url <server url>
 
