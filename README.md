@@ -1,7 +1,7 @@
 ACME-DNS module for Caddy
 ===========================
 
-This package contains a DNS provider module for [Caddy](https://github.com/caddyserver/caddy). It can be used to solve [DNS-01 challenges](https://letsencrypt.org/docs/challenge-types/) with [ACME-DNS](https://github.com/joohoi/acme-dns) server.
+This package contains a DNS provider module for [Caddy](https://github.com/caddyserver/caddy). It can be used to solve [DNS-01 challenges](https://letsencrypt.org/docs/challenge-types/) with [ACME-DNS](https://github.com/joohoi/acme-dns).
 
 ## Caddy module name
 
@@ -11,11 +11,11 @@ dns.providers.acmedns
 
 ## Using ACME-DNS to obtain HTTPS certificates with Caddy
 
-To use ACME-DNS for solving [DNS-01 challenge](https://letsencrypt.org/docs/challenge-types/) and obtaining a certificate, you'll need:
+To use ACME-DNS to solve the [DNS-01 challenge](https://letsencrypt.org/docs/challenge-types/) and obtain a certificate, you'll need:
 
 * Caddy version with this plugin built-in. See [xcaddy](https://github.com/caddyserver/xcaddy) to learn how to build Caddy with plugins.
 * A domain name that you control. In this example, we'll assume it's `your-domain.example.com`. You'll need to be able to create a CNAME record with name `_acme-challenge.your-domain.example.com`.
-* An access to ACME-DNS server. For testing purposes, you can you the public server at [https://auth.acme-dns.io](). However, self-hosting is highly encouraged. To learn how to self-host ACME-DNS server, refer to [ACME-DNS documentation](https://github.com/joohoi/acme-dns#self-hosted).
+* Access to ACME-DNS. For testing purposes, you can use the public server at [https://auth.acme-dns.io](). However, self-hosting is highly encouraged. To learn how to self-host ACME-DNS server, refer to [ACME-DNS documentation](https://github.com/joohoi/acme-dns#self-hosted).
 
 
 Then follow these steps:
@@ -24,7 +24,7 @@ Then follow these steps:
 
 	`curl -X POST https://auth.acme-dns.io/register`
 
-	The response should be a JSON that contains your new credentials, looking similar to this one:
+	The response should be JSON containing your new credentials, similar to this:
 
 	```
 	{
@@ -62,11 +62,11 @@ Then follow these steps:
 There are two orthogonal choices that you can make about the configuration of `acmedns` plugin.
 
 1. Whether to put the credentials directly in `Caddyfile` / `caddy.json` _or_ to use a separate credentials file.
-2. Whether to use a simple one-account configuration as described in the previous section _or_ to use a multi-account set up.
+2. Whether to use a simple one-account configuration as described in the previous section _or_ to use a multi-account setup.
 
 ### JSON credentials file
 
-You can save `acmedns` account credentials as a JSON file instead or writing it directly to `Caddyfile`/`caddy.json`. The credentials file should look like this:
+You can save `acmedns` account credentials as a JSON file instead of writing them directly to `Caddyfile`/`caddy.json`. The credentials file should look like this:
 
 ```
 {
@@ -89,7 +89,7 @@ respond "Hello"
 
 ### Multi-account configuration
 
-Simple configuration showed in the previous section is enough for most use-cases. If you are serving multiple domains, you can use different `dns acmedns {...}` directives for different site blocks and thus use different ACME-DNS accounts per domain:
+The simple configuration shown in the previous section is enough for most use cases. If you are serving multiple domains, you can use different `dns acmedns {...}` directives for different site blocks and thus use different ACME-DNS accounts per domain:
 
 ```
 your-domain-1.example.com {
@@ -234,7 +234,7 @@ If Caddy hangs while trying to obtain a certificate and then throws a timeout er
 
 You can check this with `dig _acme-challenge.your-domain.example.com.`
 
-If this record it correct, this error might be caused by DNS resolvers caching behaviour. Using Cloudflare or Google resolvers (1.1.1.1 and 8.8.8.8) might help:
+If this record is correct, this error might be caused by DNS resolvers' caching behaviour. Using Cloudflare or Google resolvers (1.1.1.1 and 8.8.8.8) might help:
 
 ```
 your-domain.example.com
